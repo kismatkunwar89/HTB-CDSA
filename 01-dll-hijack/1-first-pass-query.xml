@@ -1,0 +1,31 @@
+<!--
+  querybeforedllinjection.xml
+  Run in Event Viewer BEFORE executing detectdll.ps1.
+  Purpose: quick visual triage to confirm unsigned DLL loads are present
+  and identify which processes and paths are involved before running automation.
+
+  ANCHOR: Signed=false
+  Legitimate system DLLs are always Microsoft-signed. Any DLL with no valid
+  signature is immediately suspicious regardless of path or process.
+  This single filter wipes ~95% of benign noise in one pass.
+
+  What to look for in results:
+    - ImageLoaded : the unsigned DLL path - is it in a writable directory?
+    - Image       : the process that loaded it - is it a trusted executable?
+    - The combination of a trusted exe (calc.exe) + unsigned DLL in same
+      writable directory = DLL hijack confirmed.
+
+  DO NOT suppress any process or path upfront - review everything first.
+  Suppression only after you have baselined your environment.
+  Log: Microsoft-Windows-Sysmon/Operational
+-->
+
+<QueryList>
+  <Query Id="0" Path="Microsoft-Windows-Sysmon/Operational">
+    <Select Path="Microsoft-Windows-Sysmon/Operational">
+      *[System[(EventID=7)]]
+      and
+      *[EventData[Data[@Name='Signed']='false']]
+    </Select>
+  </Query>
+</QueryList>

@@ -1,0 +1,39 @@
+<!--
+  querybeforeps1run.xml
+  Run these in Event Viewer BEFORE executing the PS1 scripts.
+  Purpose: quick visual triage to confirm IOCs are present and
+  understand what you are dealing with before running automation.
+  Anchor on WHAT is being loaded, not WHO is loading it.
+  Review the Image column in results manually — suppress nothing
+  upfront, baseline your environment first.
+-->
+
+<!-- ============================================================
+  CLR INJECTION — First-pass triage filter
+  Anchors on ImageLoaded = known CLR DLL paths (both x64 and x86).
+  Returns every process that loaded the .NET runtime.
+  Look at the Image column and ask: does this process have any
+  reason to run .NET? spoolsv.exe, notepad.exe, svchost.exe etc.
+  loading CLR = IOC for execute-assembly / unmanaged PS injection.
+  DO NOT suppress powershell.exe or other .NET hosts upfront —
+  an injected or compromised .NET host would disappear from results.
+  Suppression only after environment is baselined.
+  Log: Microsoft-Windows-Sysmon/Operational
+============================================================ -->
+<QueryList>
+  <Query Id="0" Path="Microsoft-Windows-Sysmon/Operational">
+    <Select Path="Microsoft-Windows-Sysmon/Operational">
+      *[System[(EventID=7)]]
+      and
+      *[EventData[
+        Data[@Name='ImageLoaded']='C:\Windows\Microsoft.NET\Framework64\v4.0.30319\clr.dll'
+        or
+        Data[@Name='ImageLoaded']='C:\Windows\Microsoft.NET\Framework\v4.0.30319\clr.dll'
+        or
+        Data[@Name='ImageLoaded']='C:\Windows\Microsoft.NET\Framework64\v4.0.30319\clrjit.dll'
+        or
+        Data[@Name='ImageLoaded']='C:\Windows\Microsoft.NET\Framework\v4.0.30319\clrjit.dll'
+      ]]
+    </Select>
+  </Query>
+</QueryList>

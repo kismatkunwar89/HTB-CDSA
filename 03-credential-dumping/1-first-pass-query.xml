@@ -1,0 +1,33 @@
+<!--
+  querybeforeprocessaccess.xml
+  Run in Event Viewer BEFORE executing detect-process-access.ps1.
+
+  EVENT: Sysmon ID 10 (ProcessAccess)
+  First-pass: show every process access event. No filtering, no names.
+  Review these fields in the results manually:
+    SourceImage   - what process did the accessing? unusual path?
+    TargetImage   - what did it access? (lsass.exe = credential dump)
+    GrantedAccess - 0x1010 etc. = memory read = dumping
+    SourceUser    - if different from TargetUser = abnormal
+    CallTrace     - UNKNOWN = injected code
+
+  Example of a malicious hit:
+    SourceImage   : C:\Users\waldo\Downloads\AgentEXE.exe   (writable path)
+    TargetImage   : C:\Windows\system32\lsass.exe
+    GrantedAccess : 0x1010
+    SourceUser    : DESKTOP-R4PEEIF\waldo
+    TargetUser    : NT AUTHORITY\SYSTEM                     (cross-user)
+    CallTrace     : ...|UNKNOWN(0000000180085CA7)           (injected)
+
+  Log: Microsoft-Windows-Sysmon/Operational
+-->
+
+<QueryList>
+  <Query Id="0" Path="Microsoft-Windows-Sysmon/Operational">
+    <Select Path="Microsoft-Windows-Sysmon/Operational">
+      *[System[(EventID=10)]]
+      and
+      *[EventData[Data[@Name='GrantedAccess']='0x1010']]
+    </Select>
+  </Query>
+</QueryList>
