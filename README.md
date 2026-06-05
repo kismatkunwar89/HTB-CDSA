@@ -91,6 +91,16 @@ Key events enabled:
 5. powershell -ExecutionPolicy Bypass -File <module>\<usecase>\2-detect.ps1
 ```
 
+> **Note:** The PowerShell detector (`2-detect.ps1`) can be run directly against
+> any `.evtx` without the XML first-pass step. The XML queries exist for large
+> logs where pre-filtering in Event Viewer reduces volume before the script runs.
+>
+> **Warning when editing XML filters:** The XML queries are written to be
+> deliberately broad. Do not tighten them to suppress noisy results - noise is
+> expected and the PowerShell script handles triage. Over-filtering in XML risks
+> removing the exact patterns that indicate an attack. When in doubt, widen the
+> filter, never narrow it.
+
 ---
 
 ## Key XPath / Sysmon lessons baked in
