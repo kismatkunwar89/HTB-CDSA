@@ -1,6 +1,9 @@
 # HTB CDSA - Sysmon Threat Detection Pack
 
-Detection scripts and XML queries for HTB Certified Defensive Security Analyst (CDSA) modules.
+Detection scripts and XML queries for [HTB Certified Defensive Security Analyst (CDSA)](https://academy.hackthebox.com/) modules.
+
+Companion blog writeups: [sec-savvy.com CDSA journey](https://github.com/kismatkunwar89/writeups) — Module 3 notes and [Skill Assessment](https://github.com/kismatkunwar89/writeups/blob/main/_posts/2026-06-05-module-3-skill-assessment.md).
+
 Each module is self-contained with its own use cases, shared config, and detector scripts.
 
 Each use case follows a **two-step workflow**:
@@ -24,7 +27,11 @@ HTB-CDSA/
 │   ├── 01-dll-hijack/
 │   ├── 02-clr-injection/
 │   ├── 03-credential-dumping/
+│   ├── 04-strange-ppid/
 │   └── _shared/
+│       ├── Invoke-EvtxRecon.ps1
+│       ├── baseline-eventlog-queries.xml
+│       └── sysmonconfig.xml
 └── README.md
 ```
 
@@ -79,6 +86,23 @@ Key events enabled:
 - **Detector** flags cross-user, writable-path, and injected-code access, then
   pivots to Event 1.
 
+### 04 - Strange PPID / Process Injection
+`04-strange-ppid/`
+- **IOC:** trusted process (e.g. `WerFault.exe`) spawning `cmd.exe` or
+  `powershell.exe` after `CreateRemoteThread` injection with empty
+  `StartModule` / `StartFunction`.
+- **First-pass anchor:** all Event ID 1 process creations (small log sets).
+- **Detector** flags impossible parent-child pairs and correlates Event ID 8.
+
+### Skill Assessment mapping
+
+| Assessment question | Folder |
+|---|---|
+| Q1 DLL Hijacking | `01-dll-hijack/` |
+| Q2–Q3 PowershellExec | `02-clr-injection/` |
+| Q4–Q5 Dump | `03-credential-dumping/` |
+| Q6 Strange PPID | `04-strange-ppid/` |
+
 ---
 
 ## Per-use-case workflow
@@ -120,6 +144,8 @@ Key events enabled:
 ---
 
 ## `_shared/`
+- `Invoke-EvtxRecon.ps1` - first-pass recon: validate path, sample XML fields,
+  enumerate Event IDs, optionally dump one Event ID before running a detector.
 - `sysmonconfig.xml` - Sysmon config enabling Events 1, 7, 10.
 - `baseline-eventlog-queries.xml` - reference 4624 (logon) / 4907 (audit-policy
   change) queries with UTC-offset and timestamp-window notes.

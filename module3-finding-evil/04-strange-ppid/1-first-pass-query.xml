@@ -1,0 +1,24 @@
+<!--
+  querybeforestrangeppid.xml
+  Run in Event Viewer BEFORE executing 2-detect.ps1.
+
+  EVENT: Sysmon ID 1 (ProcessCreate)
+  Strange PPID / process injection cases often have very few process-create
+  events. Dump all Event ID 1 first, then look for impossible parent-child
+  relationships (e.g. WerFault.exe spawning cmd.exe).
+
+  What to look for in results:
+    - ParentImage vs Image pairs that should never happen
+    - Small event volume on ID 1 makes manual review fast
+    - Follow with Event ID 8 (CreateRemoteThread) if injection is suspected
+
+  Log: Microsoft-Windows-Sysmon/Operational
+-->
+
+<QueryList>
+  <Query Id="0" Path="Microsoft-Windows-Sysmon/Operational">
+    <Select Path="Microsoft-Windows-Sysmon/Operational">
+      *[System[(EventID=1)]]
+    </Select>
+  </Query>
+</QueryList>

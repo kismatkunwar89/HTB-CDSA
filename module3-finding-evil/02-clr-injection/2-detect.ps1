@@ -15,7 +15,7 @@
 # =============================================================================
 
 # Step 0 - EVTX path (change per engagement)
-$evtx = ' C:\Logs\PowershellExec\PowershellExec.evtx'
+$evtx = 'C:\Logs\PowershellExec\PowershellExec.evtx'
 
 # Step 0b - CLR DLL paths to hunt (both x64 and x86 .NET 4.x)
 $clrDlls = @(
