@@ -2,7 +2,9 @@
 
 Detection scripts and XML queries for [HTB Certified Defensive Security Analyst (CDSA)](https://academy.hackthebox.com/) modules.
 
-Companion blog writeups: [sec-savvy.com CDSA journey](https://github.com/kismatkunwar89/writeups) — Module 3 notes and [Skill Assessment](https://github.com/kismatkunwar89/writeups/blob/main/_posts/2026-06-05-module-3-skill-assessment.md).
+Companion blog writeups: [sec-savvy.com CDSA journey](https://github.com/kismatkunwar89/writeups) - Module 3 notes and [Skill Assessment](https://github.com/kismatkunwar89/writeups/blob/main/_posts/2026-06-05-module-3-skill-assessment.md).
+
+SPL hunting queries built alongside this journey: [spl-threat-hunting-library](https://github.com/kismatkunwar89/spl-threat-hunting-library).
 
 Each module is self-contained with its own use cases, shared config, and detector scripts.
 
